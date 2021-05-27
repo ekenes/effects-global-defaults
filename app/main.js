@@ -39,14 +39,14 @@ define(["require", "exports", "esri/WebMap", "esri/views/MapView", "esri/widgets
     Object.defineProperty(exports, "__esModule", { value: true });
     (function () { return __awaiter(void 0, void 0, void 0, function () {
         function triggerAction(event) {
-            var action = event.action, item = event.item;
-            var _a = action, id = _a.id, value = _a.value;
+            var item = event.item;
             var layer = item.layer;
             var actions = item.actionsSections.reduce(function (p, c) { return p.concat(c); });
-            actions.forEach(function (action) {
-                action.value = action.value && action.id === id;
-            });
-            layer.effect = value && effects[id] ? effects[id] : null;
+            var effect = actions.map(function (action) { return action.value ? effects[action.id] : ''; })
+                .reduce(function (p, c) { return p + " " + c; })
+                .trim();
+            console.log(effect);
+            layer.effect = effect.length > 0 ? effect : null;
         }
         function basemapListItemCreatedFunction(event) {
             var item = event.item;
@@ -86,11 +86,11 @@ define(["require", "exports", "esri/WebMap", "esri/views/MapView", "esri/widgets
                         expanded: false
                     }), "bottom-left");
                     effects = {
-                        "Bloom": "bloom(2, 1px, 0.1)",
+                        "Bloom": "bloom(2,1px,0.1)",
                         "Blur": "blur(2px)",
                         "Brightness": "brightness(150%)",
                         "Contrast": "contrast(200%)",
-                        "Drop shadow": "drop-shadow(1px, 1px, 2px, #000000)",
+                        "Drop shadow": "drop-shadow(1px,1px,2px,#000000)",
                         "Grayscale": "grayscale(100%)",
                         "Hue rotate": "hue-rotate(100deg)",
                         "Invert": "invert(100%)",

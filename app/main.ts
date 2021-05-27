@@ -43,11 +43,11 @@ import { getUrlParams } from "./urlParams";
   }), "bottom-left");
 
   const effects = {
-    "Bloom": `bloom(2, 1px, 0.1)`,
+    "Bloom": `bloom(2,1px,0.1)`,
     "Blur": `blur(2px)`,
     "Brightness": `brightness(150%)`,
     "Contrast": `contrast(200%)`,
-    "Drop shadow": `drop-shadow(1px, 1px, 2px, #000000)`,
+    "Drop shadow": `drop-shadow(1px,1px,2px,#000000)`,
     "Grayscale": `grayscale(100%)`,
     "Hue rotate": `hue-rotate(100deg)`,
     "Invert": `invert(100%)`,
@@ -80,17 +80,17 @@ import { getUrlParams } from "./urlParams";
   }), "top-right");
 
   function triggerAction (event: esri.LayerListTriggerActionEvent) {
-    const { action, item } = event;
-    const { id, value } = action as esri.ActionToggle;
-
+    const { item } = event;
     const layer = item.layer as esri.FeatureLayer;
     const actions = item.actionsSections.reduce((p, c) => p.concat(c));
 
-    actions.forEach(action => {
-      (action as ActionToggle).value = (action as ActionToggle).value && action.id === id;
-    });
+    const effect = actions.map(action => (action as ActionToggle).value ? effects[action.id] : '')
+      .reduce((p,c) => `${p} ${c}`)
+      .trim();
 
-    layer.effect = value && effects[id] ? effects[id] : null;
+      console.log(effect)
+
+    layer.effect = effect.length > 0 ? effect : null;
   }
 
   layerList.on("trigger-action", triggerAction);
